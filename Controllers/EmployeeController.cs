@@ -19,7 +19,14 @@ namespace ProyectoEmpleado.Controllers
             var userName = HttpContext.Session.GetString("UserName");
             ViewBag.UserName = userName;
             
-            return View(await _context.Employee.ToArrayAsync());
+            return View(await _context.Register.ToArrayAsync());
+            // return View(await _context.Register.ToListAsync());
+
+        }
+
+          public async Task<IActionResult> ListEmploye()
+        {
+            return View(await _context.Employee.ToListAsync());
         }
 
         public IActionResult Create()
