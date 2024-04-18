@@ -3,6 +3,12 @@
 }
 
 <div class="container">
+    <h1>Lista de empleados</h1>
+    <div class="row">
+        <div class="col-md-12">
+            <a asp-action="Index" asp-controller="Employee" class="btn btn-primary mt-3 mb-3">Historial horas</a>
+        </div>
+    </div>
     <table class="table">
         <thead>
             <tr>
@@ -21,6 +27,7 @@
                     <td>@item.LastName</td>
                     <td>@item.Email</td>
                     <td>
+                        <a asp-controller="" asp-action="" asp-route-id="" class="btn btn-success">Editar</a>
                         <a asp-controller="" asp-action="" asp-route-id="" class="btn btn-danger">Eliminar</a>
                     </td>
                 </tr>

@@ -17,9 +17,21 @@ namespace ProyectoEmpleado.Controllers
         public async Task<IActionResult> Index()
         {
             var userName = HttpContext.Session.GetString("UserName");
-            ViewBag.UserName = userName;
+            var userId = HttpContext.Session.GetInt32("userId");
             
-            return View(await _context.Register.ToArrayAsync());
+            ViewBag.UserName = userName;
+            ViewBag.UserId = userId;
+
+            //guardian
+            if(ViewBag.UserId != null)
+            {
+                return View(await _context.Register.Where(m=>m.IdEmpleado == userId).ToArrayAsync());
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            
             // return View(await _context.Register.ToListAsync());
 
         }
@@ -46,8 +58,37 @@ namespace ProyectoEmpleado.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Remove("UserName");
+            HttpContext.Session.Remove("userId");
             return RedirectToAction("Index", "Home");
         }
+        [HttpPost]
+       public async Task<IActionResult> EntryTimeEmployee(Register r)
+{   
+    var userId = HttpContext.Session.GetInt32("userId");
+
+    if(userId != null)
+    {
+        var EntryTime = new Register
+        {
+            // Establece el valor de IdEmpleado usando userId
+            IdEmpleado = userId.Value, 
+            FechaIngreso = DateTime.Now
+        };
+
+        _context.Register.Add(EntryTime);
+        await _context.SaveChangesAsync();
+        return RedirectToAction("Index", "Employee");
+    }
+    else
+    {
+        // Si userId es null
+        return RedirectToAction("Index", "Employee");
+    }
+}
+
+
+    
+  
 
     }
 }

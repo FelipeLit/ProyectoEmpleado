@@ -50,10 +50,11 @@ public class HomeController : Controller
     {   
 
         var user = await _context.Employee.FirstOrDefaultAsync(n=>n.Email == email && n.Password == password);
-     
+       
         if (user != null)
         {
             HttpContext.Session.SetString("UserName", user.Name);
+            HttpContext.Session.SetInt32("userId", user.Id);
             return RedirectToAction("Index", "Employee");
         }
         else
