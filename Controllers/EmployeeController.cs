@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoEmpleado.Data;
@@ -18,29 +19,23 @@ namespace ProyectoEmpleado.Controllers
         {
             var userName = HttpContext.Session.GetString("UserName");
             var userId = HttpContext.Session.GetInt32("userId");
-            
+
             ViewBag.UserName = userName;
             ViewBag.UserId = userId;
 
             //guardian
-            if(ViewBag.UserId != null)
+            if (ViewBag.UserId != null)
             {
-                return View(await _context.Register.Where(m=>m.IdEmpleado == userId).ToArrayAsync());
+                return View(await _context.Register.Where(m => m.IdEmpleado == userId).ToArrayAsync());
             }
             else
             {
                 return RedirectToAction("Index", "Home");
             }
-            
+
             // return View(await _context.Register.ToListAsync());
 
         }
-
-          public async Task<IActionResult> ListEmploye()
-        {
-            return View(await _context.Employee.ToListAsync());
-        }
-
         public IActionResult Create()
         {
             return View();
@@ -51,7 +46,7 @@ namespace ProyectoEmpleado.Controllers
         {
             _context.Employee.Add(e);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index","Home");
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
@@ -62,33 +57,58 @@ namespace ProyectoEmpleado.Controllers
             return RedirectToAction("Index", "Home");
         }
         [HttpPost]
-       public async Task<IActionResult> EntryTimeEmployee(Register r)
-{   
-    var userId = HttpContext.Session.GetInt32("userId");
-
-    if(userId != null)
-    {
-        var EntryTime = new Register
+        public async Task<IActionResult> EntryTimeEmployee()
         {
-            // Establece el valor de IdEmpleado usando userId
-            IdEmpleado = userId.Value, 
-            FechaIngreso = DateTime.Now
-        };
+            var userId = HttpContext.Session.GetInt32("userId");
 
-        _context.Register.Add(EntryTime);
-        await _context.SaveChangesAsync();
-        return RedirectToAction("Index", "Employee");
-    }
-    else
-    {
-        // Si userId es null
-        return RedirectToAction("Index", "Employee");
-    }
-}
+            if (userId != null)
+            {
+                var EntryTime = new Register
+                {
+                    // nos da el valor de IdEmpleado usando userId
+                    IdEmpleado = userId.Value,
+                    FechaIngreso = DateTime.Now,
+                };
 
+                _context.Register.Add(EntryTime);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Employee");
+            }
+            else
+            {
+                // Si userId es null
+                return RedirectToAction("Index", "Employee");
+            }
+        }
 
+        public async Task<IActionResult> DepartureTimeEmployee()
+        {
+            var userId = HttpContext.Session.GetInt32("userId");
+            var entry = _context.Register.FirstOrDefault(x => x.IdEmpleado == userId && x.FechaSalida ==null);
+            if(userId != null)
+            {
+                entry.FechaSalida = DateTime.Now;
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Employee");
+            }
+            else{
+                // Si userId es null
+                return RedirectToAction("Index", "Employee");
+            }
+        }
+        public async Task<IActionResult> ListEmploye()
+        {
+            return View(await _context.Employee.ToListAsync());
+        }
     
-  
 
+        public IActionResult DeleteEmployee(int id)
+        {
+
+            var employee = _context.Employee.Find(id);
+            _context.Employee.Remove(employee);
+            _context.SaveChanges();
+            return RedirectToAction("Index", "Employee");
+        }
     }
 }
