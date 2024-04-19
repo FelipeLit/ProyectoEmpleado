@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Inicio";
 }
-@model Employee;
+@* @model Employee; *@
 <div class="container">
 
     <div class="row d-flex justify-content-center">
@@ -15,7 +15,7 @@
 
                 <div class="mt-3">
                     <label for="" class="form-label">Email</label>
-                    <input type="text" name="email" id="" class="form-control">
+                    <input type="text" name="email" id="" class="form-control" autocomplete="off">
                 </div>
 
                 <div class="mt-3">
@@ -28,14 +28,14 @@
                 <div class="mt-2 text-center">
                     <a asp-action="Create" asp-controller="Employee" style="text-decoration: none;">Crear cuenta</a>
                 </div>
-            @* @if(ViewBag.ErrorMessage != null)
-            {
-                <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
-            } *@
-            </form>     
 
+                @if(TempData["errorMessage"] != null)
+                {
+                <div class="alert alert-danger mt-3">
+                   <p class="d-flex justify-content-center align-items-center"> @TempData["errorMessage"]</p>
+                </div>
+                } 
+            </form>     
         </div>
     </div>
-
-
 </div>

@@ -70,6 +70,15 @@ namespace ProyectoEmpleado.Controllers
         public async Task<IActionResult> EntryTimeEmployee()
         {
             var userId = HttpContext.Session.GetInt32("userId");
+            //botones desactivar
+            // var offFechaSalida = await _context.Register.FirstOrDefaultAsync(x=>x.IdEmpleado == userId && x.FechaIngreso== null);
+            // if (offFechaSalida != null)
+            // {
+            //     var fechaSalidaOff = new Register
+            //     {
+
+            //     };
+            // }
 
             if (userId != null)
             {
@@ -105,6 +114,8 @@ namespace ProyectoEmpleado.Controllers
                 // Si userId es null
                 return RedirectToAction("Index", "Employee");
             }
+
+            
         }
         public async Task<IActionResult> ListEmploye()
         {

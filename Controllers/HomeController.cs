@@ -55,20 +55,18 @@ public class HomeController : Controller
 
         if (user != null)
         {
-            var pass = new PasswordHasher();
-            var auth =  pass.VerifyPassword(user.Password, password);
+            var passCompare = new PasswordHasher();
+            var auth =  passCompare.VerifyPassword(user.Password, password);
             if(auth){
                 HttpContext.Session.SetString("UserName", user.Name);
                 HttpContext.Session.SetInt32("userId", user.Id);
                 return RedirectToAction("Index", "Employee");
             }
+            TempData["errorMessage"] = "Correo electrónico o contraseña incorrectos";
             return RedirectToAction("Index", "Home");
-
-       
         }
-        else
-        {
-            //ViewBag.ErrorMessage = "Correo electrónico o contraseña incorrectos";
+        else{
+            TempData["errorMessage"] = "Correo electrónico o contraseña incorrectos";
             return RedirectToAction("Index", "Home");
         }
     }
