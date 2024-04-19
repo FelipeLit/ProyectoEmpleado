@@ -1,8 +1,11 @@
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoEmpleado.Data;
 using ProyectoEmpleado.Models;
+using ProyectoEmpleado.Helpers;
+using Microsoft.VisualBasic;
 
 namespace ProyectoEmpleado.Controllers
 {
@@ -44,7 +47,14 @@ namespace ProyectoEmpleado.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateEmployee(Employee e)
         {
-            _context.Employee.Add(e);
+            var pass = new PasswordHasher(); //instancia  del hasher
+
+            var password = e.Password; //var temp password guarda el valor del password ingresado
+
+            var hasPassword = pass.HashPassword(password); //se hashea la password
+
+            e.Password = hasPassword; // se asigna el valor de la contraseña hashea en la contraseña que envia el usuario
+            _context.Employee.Add(e); 
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
         }

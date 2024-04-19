@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
 using ProyectoEmpleado.Data;
 using Microsoft.AspNetCore.Http;
+using ProyectoEmpleado.Helpers;
+
 
 namespace ProyectoEmpleado.Controllers;
 
@@ -49,13 +51,20 @@ public class HomeController : Controller
     public async Task<IActionResult> Login(string email, string password)
     {   
 
-        var user = await _context.Employee.FirstOrDefaultAsync(n=>n.Email == email && n.Password == password);
-       
+        var user = await _context.Employee.FirstOrDefaultAsync(n=>n.Email == email);
+
         if (user != null)
         {
-            HttpContext.Session.SetString("UserName", user.Name);
-            HttpContext.Session.SetInt32("userId", user.Id);
-            return RedirectToAction("Index", "Employee");
+            var pass = new PasswordHasher();
+            var auth =  pass.VerifyPassword(user.Password, password);
+            if(auth){
+                HttpContext.Session.SetString("UserName", user.Name);
+                HttpContext.Session.SetInt32("userId", user.Id);
+                return RedirectToAction("Index", "Employee");
+            }
+            return RedirectToAction("Index", "Home");
+
+       
         }
         else
         {
