@@ -18,18 +18,24 @@
                 <p class="fs-3">Bienvenido @ViewBag.UserName</p>
             }
         </div>
+        
+        @if(ViewBag.Entry == null)
+        {
+            <div class="col-md-2">
+                <form asp-action="EntryTimeEmployee" asp-controller="Employee" method="post">
+                    <button class="btn btn-success">Registar ingreso</button>
+                </form>
+            </div>
+        }
 
-        <div class="col-md-2">
-            <form asp-action="EntryTimeEmployee" asp-controller="Employee" method="post">
-                <button class="btn btn-success">Registar ingreso</button>
-            </form>
-        </div>
+        else{
 
-        <div class="col-md-2">
-            <form asp-action="DepartureTimeEmployee" asp-controller="Employee" method="post">
-                <button class="btn btn-danger">Registar salida</button>
-            </form>
-        </div>
+            <div class="col-md-2">
+                <form asp-action="DepartureTimeEmployee" asp-controller="Employee" method="post">
+                    <button class="btn btn-danger">Registar salida</button>
+                </form>
+            </div>
+        }
 
         <div class="col-md-4 d-flex justify-content-end">
             <form asp-action="Logout" asp-controller="Employee" method="post">

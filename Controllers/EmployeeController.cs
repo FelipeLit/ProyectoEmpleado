@@ -20,8 +20,17 @@ namespace ProyectoEmpleado.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var userName = HttpContext.Session.GetString("UserName");
             var userId = HttpContext.Session.GetInt32("userId");
+            //retornar el valor de una variable
+            //return Json(userId);
+
+            //Verificamos si fecha de salida es nula para activar o desactivar el button
+            var button = await _context.Register.OrderBy(x=>x.Id).LastOrDefaultAsync(x=>x.IdEmpleado == userId && x.FechaSalida == null);
+            ViewBag.Entry=button;
+
+
+            var userName = HttpContext.Session.GetString("UserName");
+            //var userId = HttpContext.Session.GetInt32("userId");
 
             ViewBag.UserName = userName;
             ViewBag.UserId = userId;
@@ -48,13 +57,11 @@ namespace ProyectoEmpleado.Controllers
         public async Task<IActionResult> CreateEmployee(Employee e)
         {
             var pass = new PasswordHasher(); //instancia  del hasher
-
             var password = e.Password; //var temp password guarda el valor del password ingresado
-
             var hasPassword = pass.HashPassword(password); //se hashea la password
-
             e.Password = hasPassword; // se asigna el valor de la contraseña hashea en la contraseña que envia el usuario
-            _context.Employee.Add(e); 
+            
+            _context.Employee.Add(e);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
         }
@@ -70,15 +77,6 @@ namespace ProyectoEmpleado.Controllers
         public async Task<IActionResult> EntryTimeEmployee()
         {
             var userId = HttpContext.Session.GetInt32("userId");
-            //botones desactivar
-            // var offFechaSalida = await _context.Register.FirstOrDefaultAsync(x=>x.IdEmpleado == userId && x.FechaIngreso== null);
-            // if (offFechaSalida != null)
-            // {
-            //     var fechaSalidaOff = new Register
-            //     {
-
-            //     };
-            // }
 
             if (userId != null)
             {
@@ -103,25 +101,36 @@ namespace ProyectoEmpleado.Controllers
         public async Task<IActionResult> DepartureTimeEmployee()
         {
             var userId = HttpContext.Session.GetInt32("userId");
-            var entry = _context.Register.FirstOrDefault(x => x.IdEmpleado == userId && x.FechaSalida ==null);
-            if(userId != null)
+            var entry = _context.Register.FirstOrDefault(x => x.IdEmpleado == userId && x.FechaSalida == null);
+            if (userId != null)
             {
                 entry.FechaSalida = DateTime.Now;
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "Employee");
             }
-            else{
+            else
+            {
                 // Si userId es null
                 return RedirectToAction("Index", "Employee");
             }
 
-            
+
         }
         public async Task<IActionResult> ListEmploye()
         {
-            return View(await _context.Employee.ToListAsync());
+            //guardian vista lista empleados
+            var userId = HttpContext.Session.GetInt32("userId");
+            if (userId != null)
+            {
+                return View(await _context.Employee.ToListAsync());
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            
         }
-    
+
 
         public IActionResult DeleteEmployee(int id)
         {
